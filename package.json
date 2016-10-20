@@ -1,0 +1,16 @@
+{
+  "name": "foci-calc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r should index.spec.js",
+    "test:watch": "npm test -- -w -b"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^3.1.0",
+    "should": "^11.1.0"
+  }
+}
