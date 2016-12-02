@@ -32,6 +32,7 @@ function formatParticipations(participations) {
     for(var j = 1; j < participation.length; j++) {
       var numOfPpl = numOfPplList[j];
       var date = yyyymmdd(dateList[j]);
+      console.log('parsed %s as %s', dateList[j], date)
       var rsvp = participation[j];
       if (rsvp != 'igen') {
         continue;
@@ -66,7 +67,7 @@ function csv(obj) {
       }
       var row = [];
       row[0] = name;
-      console.log('ppl=', ppl);
+      console.log('ppl of %s=', name, ppl);
       row[1] = ppl.sum;
       //console.log('headers=', headers);
       for (var i = 0; i < headers.length; i++) {
@@ -140,6 +141,7 @@ module.exports = function(
     }
 
     var event = participationByDate[date];
+    console.log('date', date, Object.keys(participationByDate));
     var participators = event.participators;
     var numOfPpl = event.numOfPpl;
     console.log('date is =', date, amount, numOfPpl);
@@ -161,25 +163,28 @@ module.exports = function(
     var person1 = people[i];
     for (var j = 0; j < people.length; j++) {
       var person2 = people[j];
-      if (person1 === person2) {
+      if (person1 === person2 || !person1 || !person2) {
         continue;
       }
-      var thisObligation = (obligations[person1] || {})[person2];
+      var thisObligation = (obligations[person1] || {})[person2] || 0;
       var otherObligation = (obligations[person2] || {})[person1];
-      console.log('this=%s, that=%s', thisObligation, otherObligation);
+      console.log('this=%s, that=%s between %s-%s', thisObligation, otherObligation, person1, person2);
       if (!thisObligation) {
+        //console.log('no obligation to %s from %s', person1, person2);
         continue;
       }
       if (otherObligation > thisObligation) {
+        //console.log('the other obligation is more, lets solve that to %s from %s', person1, person2);
         continue;
       }
       if (!correctedObligations[person1]) {
         correctedObligations[person1] = {};
       }
       var wired = 0;
-      if (wiresHash[person1] && wiresHash[person1][person2]) {
-        wired = wiresHash[person1][person2];
+      if (wiresHash[person2] && wiresHash[person2][person1]) {
+        wired = wiresHash[person2][person1];
       }
+      console.log('wired from %s to %s', person2, person1, wired)
       correctedObligations[person1][person2] = thisObligation - (otherObligation || 0) - wired;
 
     }
@@ -193,7 +198,7 @@ module.exports = function(
 
     correctedObligations[i].sum = sum;
   }
-  console.log('obligations=', correctedObligations);
+  console.log('obligations=\n', correctedObligations);
   //return;
 
   return csv(correctedObligations);
