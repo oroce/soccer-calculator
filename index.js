@@ -81,22 +81,12 @@ function csv(obj) {
   ]
     .concat(data);
 }
-module.exports = function(
-  participations,
-  pitchPayouts,
-  fulfillments
-) {
-  var formatted = formatParticipations(participations);
-  var formattedParticipations = formatted.participations;
-  var people = formatted.people;
-
-  console.log('formattedParticipations=', formattedParticipations);
-
-  var wiresHash = (fulfillments||[]).reduce(function(obj, row) {
+function groupFulfillments(fulfillments) {
+  return (fulfillments||[]).reduce(function(obj, row) {
+    console.log('row=', row);
     var from = row.shift();
     var to = row.shift();
     var amount = row.shift();
-    var key = from + '-' + to
     if (!obj[from]) {
       obj[from] = {};
     }
@@ -106,13 +96,12 @@ module.exports = function(
     obj[from][to] += amount;
     return obj;
   }, {});
-
-  console.log('wiresHash', wiresHash);
-  //console.log('pitchPayouts', pitch);
-
-  var participationByDate = Object.keys(formattedParticipations)
+}
+function groupParticipationsByDate(participations) {
+  console.log('participations', participations)
+  return Object.keys(participations)
     .reduce(function(grp, name) {
-      var item = formattedParticipations[name];
+      var item = participations[name];
       var dates = Object.keys(item);
       for (var i = 0; i < dates.length; i++) {
         if (!grp[dates[i]]) {
@@ -125,8 +114,11 @@ module.exports = function(
       }
       return grp;
     }, {});
-  console.log('participationByDate=', participationByDate);
+}
+
+function calculateObligations(pitchPayouts, participationByDate) {
   var obligations = {};
+
   for (var i = 0; i < pitchPayouts.length; i++) {
     var payout = pitchPayouts[i];
     if (!payout || payout[0] === '') {
@@ -157,6 +149,11 @@ module.exports = function(
       obligations[payer][participator] += costPerPerson;
     }
   }
+
+  return obligations;
+}
+
+function optimizeObligations(obligations, wiresHash, people) {
   var correctedObligations = {};
   console.log('Ppl=', people)
   for (var i = 0; i < people.length; i++) {
@@ -184,11 +181,19 @@ module.exports = function(
       if (wiresHash[person2] && wiresHash[person2][person1]) {
         wired = wiresHash[person2][person1];
       }
+      var wiredBack = 0;
+      if (wiresHash[person1] && wiresHash[person1][person2]) {
+        wiredBack = wiresHash[person1][person2];
+      }
       console.log('wired from %s to %s', person2, person1, wired)
-      correctedObligations[person1][person2] = thisObligation - (otherObligation || 0) - wired;
+      correctedObligations[person1][person2] = thisObligation - (otherObligation || 0) - wired + wiredBack;
 
     }
   }
+  return correctedObligations;
+}
+function decorateObligations(correctedObligations) {
+  var decoratedObligations = {};
   for (var i in correctedObligations) {
     var list = correctedObligations[i];
     var sum = Object.keys(list)
@@ -196,10 +201,47 @@ module.exports = function(
         return sum + list[name];
       }, 0);
 
-    correctedObligations[i].sum = sum;
+    decoratedObligations[i] = Object.assign({}, correctedObligations[i], {
+      sum: sum
+    });
   }
-  console.log('obligations=\n', correctedObligations);
+  return decoratedObligations;
+}
+function calculate(
+  participations,
+  pitchPayouts,
+  fulfillments
+) {
+  var formatted = formatParticipations(participations);
+  var formattedParticipations = formatted.participations;
+  var people = formatted.people;
+
+  console.log('formattedParticipations=', formattedParticipations);
+
+  var wiresHash = groupFulfillments(fulfillments);
+
+  console.log('wiresHash', wiresHash);
+  //console.log('pitchPayouts', pitch);
+
+  var participationByDate = groupParticipationsByDate(formattedParticipations);
+  console.log('participationByDate=', participationByDate);
+  var obligations = calculateObligations(pitchPayouts, participationByDate);
+
+  var correctedObligations = optimizeObligations(obligations, wiresHash, people);
+
+  var decoratedObligations = decorateObligations(correctedObligations);
+  console.log('obligations=\n', decoratedObligations);
   //return;
 
   return csv(correctedObligations);
 }
+module.exports = calculate;
+module.exports.yyyymmdd = yyyymmdd;
+module.exports.leftpad = leftpad;
+module.exports.formatParticipations = formatParticipations;
+module.exports.csv = csv;
+module.exports.groupFulfillments = groupFulfillments;
+module.exports.groupParticipationsByDate = groupParticipationsByDate;
+module.exports.calculateObligations = calculateObligations;
+module.exports.optimizeObligations = optimizeObligations;
+module.exports.decorateObligations = decorateObligations;
