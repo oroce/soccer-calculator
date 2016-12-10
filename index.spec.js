@@ -118,25 +118,25 @@ describe('formatParticipations', function() {
     ]);
     ret.participations.should.eql({
       'John Smith': {
-        '2015-11-05': { numOfPpl: '4' },
-        '2015-11-12': { numOfPpl: '3' },
-        '2015-11-26': { numOfPpl: '4' }
+        '2015-11-04': { numOfPpl: '4' },
+        '2015-11-11': { numOfPpl: '3' },
+        '2015-11-25': { numOfPpl: '4' }
       },
       'Jon Snow': {
-        '2015-11-05': { numOfPpl: '4' },
-        '2015-11-26': { numOfPpl: '4' }
+        '2015-11-04': { numOfPpl: '4' },
+        '2015-11-25': { numOfPpl: '4' }
       },
       'Peter Black': {
-        '2015-11-05': { numOfPpl: '4' },
-        '2015-11-12': { numOfPpl: '3' },
-        '2015-11-19': { numOfPpl: '2' },
-        '2015-11-26': { numOfPpl: '4' }
+        '2015-11-04': { numOfPpl: '4' },
+        '2015-11-11': { numOfPpl: '3' },
+        '2015-11-18': { numOfPpl: '2' },
+        '2015-11-25': { numOfPpl: '4' }
       },
       'Steve McFarlane': {
-        '2015-11-05': { numOfPpl: '4' },
-        '2015-11-12': { numOfPpl: '3' },
-        '2015-11-19': { numOfPpl: '2' },
-        '2015-11-26': { numOfPpl: '4' }
+        '2015-11-04': { numOfPpl: '4' },
+        '2015-11-11': { numOfPpl: '3' },
+        '2015-11-18': { numOfPpl: '2' },
+        '2015-11-25': { numOfPpl: '4' }
       }
     });
   });
