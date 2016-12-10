@@ -1,5 +1,5 @@
 function leftpad(value, len, fill) {
-  if (!fill) {
+  if (fill == null) {
     fill = '0';
   }
   if (typeof fill != 'string') {

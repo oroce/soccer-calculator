@@ -290,7 +290,13 @@ describe('calculateObligations', function() {
 
     calculateObligations(pitchPayouts, participations)
       .should.eql(expectation);
-  })
+  });
+
+  it('should handle when the payer is unknown', function() {
+    (function() {
+      calculateObligations([null, ['']])
+    }).should.not.throw();
+  });
 });
 
 describe('optimizeObligations', function() {
