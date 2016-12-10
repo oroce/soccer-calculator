@@ -1,13 +1,13 @@
-function leftpad(value, len, fill) {
+function leftpad (value, len, fill) {
   if (fill == null) {
     fill = '0';
   }
-  if (typeof fill != 'string') {
+  if (typeof fill !== 'string') {
     fill += '';
   }
   return (Array(len).join(fill) + value).slice(len * -1);
 }
-function yyyymmdd(date) {
+function yyyymmdd (date) {
   var d = new Date(date);
   return [
     d.getFullYear(),
@@ -16,20 +16,20 @@ function yyyymmdd(date) {
   ].join('-');
 }
 
-function formatParticipations(participations) {
+function formatParticipations (participations) {
   // console.log('participations=', JSON.stringify(participations))
   var dateList = participations.shift();
   var numOfPplList = participations.shift();
   var result = {};
   var people = {};
-  for(var i = 0; i < participations.length; i++) {
+  for (var i = 0; i < participations.length; i++) {
     var participation = participations[i];
     var person = participation[0];
     people[person] = true;
     if (!result[person]) {
       result[person] = {};
     }
-    for(var j = 1; j < participation.length; j++) {
+    for (var j = 1; j < participation.length; j++) {
       var numOfPpl = numOfPplList[j];
       var date = yyyymmdd(dateList[j]);
       // console.log('parsed %s as %s', dateList[j], date)
@@ -49,10 +49,10 @@ function formatParticipations(participations) {
   };
 }
 
-function csv(obj) {
+function csv (obj) {
   var headers = [];
   var data = Object.keys(obj)
-    .map(function(name) {
+    .map(function (name) {
       var ppl = obj[name];
       var pplList = Object.keys(ppl);
       for (var i = 0; i < pplList.length; i++) {
@@ -69,7 +69,7 @@ function csv(obj) {
       row[0] = name;
       // console.log('ppl of %s=', name, ppl)0;
       row[1] = ppl.sum;
-      //console.log('headers=', headers);
+      // console.log('headers=', headers);
       for (var i = 0; i < headers.length; i++) {
         row[i + 2] = ppl[headers[i]] || '';
       }
@@ -81,9 +81,9 @@ function csv(obj) {
   ]
     .concat(data);
 }
-function groupFulfillments(fulfillments) {
-  return (fulfillments||[]).reduce(function(obj, row) {
-    //console.log('row=', row);
+function groupFulfillments (fulfillments) {
+  return (fulfillments || []).reduce(function (obj, row) {
+    // console.log('row=', row);
     var from = row.shift();
     var to = row.shift();
     var amount = row.shift();
@@ -97,10 +97,10 @@ function groupFulfillments(fulfillments) {
     return obj;
   }, {});
 }
-function groupParticipationsByDate(participations) {
-  //console.log('participations', participations)
+function groupParticipationsByDate (participations) {
+  // console.log('participations', participations)
   return Object.keys(participations)
-    .reduce(function(grp, name) {
+    .reduce(function (grp, name) {
       var item = participations[name];
       var dates = Object.keys(item);
       for (var i = 0; i < dates.length; i++) {
@@ -116,7 +116,7 @@ function groupParticipationsByDate(participations) {
     }, {});
 }
 
-function calculateObligations(pitchPayouts, participationByDate) {
+function calculateObligations (pitchPayouts, participationByDate) {
   var obligations = {};
 
   for (var i = 0; i < pitchPayouts.length; i++) {
@@ -133,10 +133,10 @@ function calculateObligations(pitchPayouts, participationByDate) {
     }
 
     var event = participationByDate[date];
-    //console.log('date', date, Object.keys(participationByDate));
+    // console.log('date', date, Object.keys(participationByDate));
     var participators = event.participators;
     var numOfPpl = event.numOfPpl;
-    //console.log('date is =', date, amount, numOfPpl);
+    // console.log('date is =', date, amount, numOfPpl);
     var costPerPerson = amount / numOfPpl;
     for (var j = 0; j < participators.length; j++) {
       var participator = participators[j];
@@ -153,9 +153,9 @@ function calculateObligations(pitchPayouts, participationByDate) {
   return obligations;
 }
 
-function optimizeObligations(obligations, wiresHash, people) {
+function optimizeObligations (obligations, wiresHash, people) {
   var correctedObligations = {};
-  //console.log('Ppl=', people)
+  // console.log('Ppl=', people)
   for (var i = 0; i < people.length; i++) {
     var person1 = people[i];
     for (var j = 0; j < people.length; j++) {
@@ -165,13 +165,13 @@ function optimizeObligations(obligations, wiresHash, people) {
       }
       var thisObligation = (obligations[person1] || {})[person2] || 0;
       var otherObligation = (obligations[person2] || {})[person1];
-      //console.log('this=%s, that=%s between %s-%s', thisObligation, otherObligation, person1, person2);
+      // console.log('this=%s, that=%s between %s-%s', thisObligation, otherObligation, person1, person2);
       if (!thisObligation) {
-        //console.log('no obligation to %s from %s', person1, person2);
+        // console.log('no obligation to %s from %s', person1, person2);
         continue;
       }
       if (otherObligation > thisObligation) {
-        //console.log('the other obligation is more, lets solve that to %s from %s', person1, person2);
+        // console.log('the other obligation is more, lets solve that to %s from %s', person1, person2);
         continue;
       }
       if (!correctedObligations[person1]) {
@@ -185,19 +185,18 @@ function optimizeObligations(obligations, wiresHash, people) {
       if (wiresHash[person1] && wiresHash[person1][person2]) {
         wiredBack = wiresHash[person1][person2];
       }
-      //console.log('wired from %s to %s', person2, person1, wired)
+      // console.log('wired from %s to %s', person2, person1, wired)
       correctedObligations[person1][person2] = thisObligation - (otherObligation || 0) - wired + wiredBack;
-
     }
   }
   return correctedObligations;
 }
-function decorateObligations(correctedObligations) {
+function decorateObligations (correctedObligations) {
   var decoratedObligations = {};
   for (var i in correctedObligations) {
     var list = correctedObligations[i];
     var sum = Object.keys(list)
-      .reduce(function(sum, name) {
+      .reduce(function (sum, name) {
         return sum + list[name];
       }, 0);
 
@@ -207,7 +206,7 @@ function decorateObligations(correctedObligations) {
   }
   return decoratedObligations;
 }
-function calculate(
+function calculate (
   participations,
   pitchPayouts,
   fulfillments
@@ -216,12 +215,12 @@ function calculate(
   var formattedParticipations = formatted.participations;
   var people = formatted.people;
 
-  //console.log('formattedParticipations=', formattedParticipations);
+  // console.log('formattedParticipations=', formattedParticipations);
 
   var wiresHash = groupFulfillments(fulfillments);
 
   // console.log('wiresHash', wiresHash);
-  //console.log('pitchPayouts', pitch);
+  // console.log('pitchPayouts', pitch);
 
   var participationByDate = groupParticipationsByDate(formattedParticipations);
   // console.log('participationByDate=', participationByDate);
@@ -231,7 +230,7 @@ function calculate(
 
   var decoratedObligations = decorateObligations(correctedObligations);
   // console.log('obligations=\n', decoratedObligations);
-  //return;
+  // return;
 
   return csv(correctedObligations);
 }

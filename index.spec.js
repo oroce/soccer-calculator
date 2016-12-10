@@ -23,48 +23,48 @@ const csv = c.csv;
 //   });
 // });
 
-describe('yyyymmdd', function() {
-  it('should format 2016-01-01', function() {
+describe('yyyymmdd', function () {
+  it('should format 2016-01-01', function () {
     yyyymmdd(new Date('Fri Jan 01 2016 01:00:00'))
       .should.eql('2016-01-01');
   });
 
-  it('should format 2016-10-01', function() {
+  it('should format 2016-10-01', function () {
     yyyymmdd(new Date('Fri Oct 01 2016 01:00:00'))
       .should.eql('2016-10-01');
   });
 
-  it('should format 2016-10-10', function() {
+  it('should format 2016-10-10', function () {
     yyyymmdd(new Date('Fri Oct 10 2016 01:00:00'))
       .should.eql('2016-10-10');
   });
 });
 
-describe('leftpad', function() {
-  it('should prepend zero by default', function() {
+describe('leftpad', function () {
+  it('should prepend zero by default', function () {
     leftpad('foo', 4).should.eql('0foo');
   });
 
-  it('should not prepend anything if text is longer then len', function() {
+  it('should not prepend anything if text is longer then len', function () {
     leftpad('foo', 3).should.eql('foo');
     leftpad('foo', 2).should.eql('oo');
   });
 
-  it('should work with non string values', function() {
+  it('should work with non string values', function () {
     leftpad(1234, 5).should.eql('01234');
   });
 
-  it('should prepend with the supplied character', function() {
+  it('should prepend with the supplied character', function () {
     leftpad('foo', 5, '-').should.eql('--foo');
   });
 
-  it('should work with non string fillings', function() {
+  it('should work with non string fillings', function () {
     leftpad('foo', 5, 0).should.eql('00foo');
   });
 });
 
-describe('formatParticipations', function() {
-  it('should transform the input', function() {
+describe('formatParticipations', function () {
+  it('should transform the input', function () {
     var ret = formatParticipations([
       [
         '',
@@ -142,10 +142,8 @@ describe('formatParticipations', function() {
   });
 });
 
-
-
-describe('groupFulfillments', function() {
-  it('should group fulfillments', function() {
+describe('groupFulfillments', function () {
+  it('should group fulfillments', function () {
     groupFulfillments([
       ['Jon', 'Steve', 1200],
       ['Pete', 'Steve', 1.4],
@@ -165,7 +163,7 @@ describe('groupFulfillments', function() {
     });
   });
 
-  it('should sum multiple fulfillments', function() {
+  it('should sum multiple fulfillments', function () {
     groupFulfillments([
       ['Jon', 'Steve', 1200],
       ['Pete', 'Steve', 1.4],
@@ -181,12 +179,12 @@ describe('groupFulfillments', function() {
       'Steve': {
         'Pete': 1900
       }
-    })
+    });
   });
 });
 
-describe('groupParticipationsByDate', function() {
-  it('should group participations by date', function() {
+describe('groupParticipationsByDate', function () {
+  it('should group participations by date', function () {
     groupParticipationsByDate({
       'John Smith': {
         '2015-11-05': { numOfPpl: '4' },
@@ -238,13 +236,13 @@ describe('groupParticipationsByDate', function() {
   });
 });
 
-describe('calculateObligations', function() {
-  it('should calculate obligations', function() {
+describe('calculateObligations', function () {
+  it('should calculate obligations', function () {
     var pitchPayouts = [
       ['John Smith', new Date('2015-11-05'), 200],
       ['Jon Snow', new Date('2015-11-12'), 300],
       ['John Smith', new Date('2015-11-26'), 141],
-      ['Peter Black', new Date('2015-11-19'), 200],
+      ['Peter Black', new Date('2015-11-19'), 200]
     ];
     var participations = {
       '2015-11-05': {
@@ -281,7 +279,7 @@ describe('calculateObligations', function() {
       'Jon Snow': {
         'John Smith': 100,
         'Peter Black': 100,
-        'Steve McFarlane': 100,
+        'Steve McFarlane': 100
       },
       'Peter Black': {
         'Steve McFarlane': 100
@@ -292,15 +290,15 @@ describe('calculateObligations', function() {
       .should.eql(expectation);
   });
 
-  it('should handle when the payer is unknown', function() {
-    (function() {
-      calculateObligations([null, ['']])
+  it('should handle when the payer is unknown', function () {
+    (function () {
+      calculateObligations([null, ['']]);
     }).should.not.throw();
   });
 });
 
-describe('optimizeObligations', function() {
-  it('should optimize the obligations', function() {
+describe('optimizeObligations', function () {
+  it('should optimize the obligations', function () {
     var obligations = {
       'John Smith': {
         'Jon Snow': 50,
@@ -310,7 +308,7 @@ describe('optimizeObligations', function() {
       'Jon Snow': {
         'John Smith': 100,
         'Peter Black': 100,
-        'Steve McFarlane': 100,
+        'Steve McFarlane': 100
       },
       'Peter Black': {
         'Steve McFarlane': 100,
@@ -348,16 +346,15 @@ describe('optimizeObligations', function() {
       wires,
       people
     ).should.eql(expectation);
-
   });
 });
 
-describe('decorateObligations', function() {
-  it('should decorate obligations', function() {
+describe('decorateObligations', function () {
+  it('should decorate obligations', function () {
     decorateObligations({
       'Jon': {
         'Steve': 100,
-        'Stan': 50,
+        'Stan': 50
       },
       'Steve': {
         'Stan': 30
@@ -376,8 +373,8 @@ describe('decorateObligations', function() {
   });
 });
 
-describe('csv', function() {
-  it('should generate csv', function() {
+describe('csv', function () {
+  it('should generate csv', function () {
     csv({
       'Jon': {
         'Steve': 100,

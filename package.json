@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -r should index.spec.js",
-    "posttest": "npm run coverage",
+    "posttest": "[ -z \"$COVERALLS_REPO_TOKEN\" ] && exit 0 || npm run coverage",
     "precover": "mkdir -p coverage",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -r should index.spec.js",
     "coverage": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
-
     "coverage__": "FOCICALC_COVERAGE=1 mocha -r should -R mocha-lcov-reporter index.spec.js | coveralls",
-    "test:watch": "npm test -- -w -b"
+    "test:watch": "npm test -- -w -b",
+    "lint": "semistandard"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +20,12 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.1.0",
     "mocha-lcov-reporter": "^1.2.0",
+    "pre-commit": "^1.2.0",
+    "semistandard": "^9.2.1",
     "should": "^11.1.0"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "test"
+  ]
 }
