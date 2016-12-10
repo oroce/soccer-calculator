@@ -27,5 +27,11 @@
   "pre-commit": [
     "lint",
     "test"
-  ]
+  ],
+  "semistandard": {
+    "env": {
+      "node": true,
+      "mocha": true
+    }
+  }
 }

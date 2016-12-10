@@ -22,7 +22,7 @@ function formatParticipations (participations) {
   var numOfPplList = participations.shift();
   var result = {};
   var people = {};
-  for (var i = 0; i < participations.length; i++) {
+  for (var i = 0; i < participations.length; i++) {
     var participation = participations[i];
     var person = participation[0];
     people[person] = true;
@@ -34,7 +34,7 @@ function formatParticipations (participations) {
       var date = yyyymmdd(dateList[j]);
       // console.log('parsed %s as %s', dateList[j], date)
       var rsvp = participation[j];
-      if (rsvp != 'igen') {
+      if (rsvp !== 'igen') {
         continue;
       }
       result[person][date] = {
@@ -55,7 +55,7 @@ function csv (obj) {
     .map(function (name) {
       var ppl = obj[name];
       var pplList = Object.keys(ppl);
-      for (var i = 0; i < pplList.length; i++) {
+      for (var i = 0; i < pplList.length; i++) {
         var person = pplList[i];
         if (person === 'sum') {
           continue;
@@ -70,8 +70,8 @@ function csv (obj) {
       // console.log('ppl of %s=', name, ppl)0;
       row[1] = ppl.sum;
       // console.log('headers=', headers);
-      for (var i = 0; i < headers.length; i++) {
-        row[i + 2] = ppl[headers[i]] || '';
+      for (var j = 0; j < headers.length; i++) {
+        row[j + 2] = ppl[headers[j]] || '';
       }
       return row;
     });
@@ -232,7 +232,7 @@ function calculate (
   // console.log('obligations=\n', decoratedObligations);
   // return;
 
-  return csv(correctedObligations);
+  return csv(decoratedObligations);
 }
 module.exports = calculate;
 module.exports.yyyymmdd = yyyymmdd;
