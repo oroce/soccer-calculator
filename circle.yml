@@ -1,0 +1,8 @@
+machine:
+  node:
+    version: 6
+  environment:
+    COVERALLS_SERVICE_NAME: circleci
+test:
+  post:
+    - npm run coverage
