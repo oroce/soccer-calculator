@@ -17,7 +17,7 @@ function yyyymmdd(date) {
 }
 
 function formatParticipations(participations) {
-  console.log('participations=', JSON.stringify(participations))
+  // console.log('participations=', JSON.stringify(participations))
   var dateList = participations.shift();
   var numOfPplList = participations.shift();
   var result = {};
@@ -32,7 +32,7 @@ function formatParticipations(participations) {
     for(var j = 1; j < participation.length; j++) {
       var numOfPpl = numOfPplList[j];
       var date = yyyymmdd(dateList[j]);
-      console.log('parsed %s as %s', dateList[j], date)
+      // console.log('parsed %s as %s', dateList[j], date)
       var rsvp = participation[j];
       if (rsvp != 'igen') {
         continue;
@@ -67,7 +67,7 @@ function csv(obj) {
       }
       var row = [];
       row[0] = name;
-      console.log('ppl of %s=', name, ppl);
+      // console.log('ppl of %s=', name, ppl)0;
       row[1] = ppl.sum;
       //console.log('headers=', headers);
       for (var i = 0; i < headers.length; i++) {
@@ -83,7 +83,7 @@ function csv(obj) {
 }
 function groupFulfillments(fulfillments) {
   return (fulfillments||[]).reduce(function(obj, row) {
-    console.log('row=', row);
+    //console.log('row=', row);
     var from = row.shift();
     var to = row.shift();
     var amount = row.shift();
@@ -98,7 +98,7 @@ function groupFulfillments(fulfillments) {
   }, {});
 }
 function groupParticipationsByDate(participations) {
-  console.log('participations', participations)
+  //console.log('participations', participations)
   return Object.keys(participations)
     .reduce(function(grp, name) {
       var item = participations[name];
@@ -133,10 +133,10 @@ function calculateObligations(pitchPayouts, participationByDate) {
     }
 
     var event = participationByDate[date];
-    console.log('date', date, Object.keys(participationByDate));
+    //console.log('date', date, Object.keys(participationByDate));
     var participators = event.participators;
     var numOfPpl = event.numOfPpl;
-    console.log('date is =', date, amount, numOfPpl);
+    //console.log('date is =', date, amount, numOfPpl);
     var costPerPerson = amount / numOfPpl;
     for (var j = 0; j < participators.length; j++) {
       var participator = participators[j];
@@ -155,7 +155,7 @@ function calculateObligations(pitchPayouts, participationByDate) {
 
 function optimizeObligations(obligations, wiresHash, people) {
   var correctedObligations = {};
-  console.log('Ppl=', people)
+  //console.log('Ppl=', people)
   for (var i = 0; i < people.length; i++) {
     var person1 = people[i];
     for (var j = 0; j < people.length; j++) {
@@ -165,7 +165,7 @@ function optimizeObligations(obligations, wiresHash, people) {
       }
       var thisObligation = (obligations[person1] || {})[person2] || 0;
       var otherObligation = (obligations[person2] || {})[person1];
-      console.log('this=%s, that=%s between %s-%s', thisObligation, otherObligation, person1, person2);
+      //console.log('this=%s, that=%s between %s-%s', thisObligation, otherObligation, person1, person2);
       if (!thisObligation) {
         //console.log('no obligation to %s from %s', person1, person2);
         continue;
@@ -185,7 +185,7 @@ function optimizeObligations(obligations, wiresHash, people) {
       if (wiresHash[person1] && wiresHash[person1][person2]) {
         wiredBack = wiresHash[person1][person2];
       }
-      console.log('wired from %s to %s', person2, person1, wired)
+      //console.log('wired from %s to %s', person2, person1, wired)
       correctedObligations[person1][person2] = thisObligation - (otherObligation || 0) - wired + wiredBack;
 
     }
@@ -216,21 +216,21 @@ function calculate(
   var formattedParticipations = formatted.participations;
   var people = formatted.people;
 
-  console.log('formattedParticipations=', formattedParticipations);
+  //console.log('formattedParticipations=', formattedParticipations);
 
   var wiresHash = groupFulfillments(fulfillments);
 
-  console.log('wiresHash', wiresHash);
+  // console.log('wiresHash', wiresHash);
   //console.log('pitchPayouts', pitch);
 
   var participationByDate = groupParticipationsByDate(formattedParticipations);
-  console.log('participationByDate=', participationByDate);
+  // console.log('participationByDate=', participationByDate);
   var obligations = calculateObligations(pitchPayouts, participationByDate);
 
   var correctedObligations = optimizeObligations(obligations, wiresHash, people);
 
   var decoratedObligations = decorateObligations(correctedObligations);
-  console.log('obligations=\n', decoratedObligations);
+  // console.log('obligations=\n', decoratedObligations);
   //return;
 
   return csv(correctedObligations);
