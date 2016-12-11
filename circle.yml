@@ -1,0 +1,10 @@
+machine:
+  node:
+    version: 6
+  environment:
+    COVERALLS_SERVICE_NAME: circleci
+test:
+  override:
+    - npm run lint
+    - npm test
+    - npm run coverage
