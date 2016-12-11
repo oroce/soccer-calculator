@@ -70,12 +70,11 @@ function csv (obj) {
       // console.log('ppl of %s=', name, ppl)0;
       row[1] = ppl.sum;
       // console.log('headers=', headers);
-      for (var j = 0; j < headers.length; i++) {
+      for (var j = 0; j < headers.length; j++) {
         row[j + 2] = ppl[headers[j]] || '';
       }
       return row;
     });
-
   return [
     ['', 'sum'].concat(headers)
   ]
